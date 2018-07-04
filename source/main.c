@@ -16,7 +16,7 @@
 
 #define ERPT_SAVE_ID 0x80000000000000D1
 #define TITLE_ID 0x4200000000000000
-#define HEAP_SIZE 0x000940000
+#define HEAP_SIZE 0x000640000
 
 // we aren't an applet
 u32 __nx_applet_type = AppletType_None;
@@ -72,6 +72,7 @@ static loop_status_t loop(loop_status_t (*callback)(void))
     console_render();
     if (status != LOOP_CONTINUE)
       return status;
+    svcSleepThread(100000000L);
   }
   return LOOP_EXIT;
 }

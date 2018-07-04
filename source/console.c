@@ -198,8 +198,6 @@ console_set_status(const char *fmt, ...)
 void
 console_print(const char *fmt, ...)
 {
-  fclose(stdout);
-  stdout = stderr = fopen("/logs/ftpd.log", "a");
   va_list ap;
   va_start(ap, fmt);
   vprintf(fmt, ap);
