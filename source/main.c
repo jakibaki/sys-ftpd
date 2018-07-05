@@ -9,7 +9,6 @@
 #include "console.h"
 #include "ftp.h"
 
-
 #include <switch.h>
 
 #include "util.h"
@@ -64,17 +63,17 @@ void __appExit(void)
 
 static loop_status_t loop(loop_status_t (*callback)(void))
 {
-  loop_status_t status = LOOP_CONTINUE;
+    loop_status_t status = LOOP_CONTINUE;
 
-  while (appletMainLoop())
-  {
-    status = callback();
-    console_render();
-    if (status != LOOP_CONTINUE)
-      return status;
-    svcSleepThread(100000000L);
-  }
-  return LOOP_EXIT;
+    while (appletMainLoop())
+    {
+        status = callback();
+        console_render();
+        if (status != LOOP_CONTINUE)
+            return status;
+        svcSleepThread(100000000L);
+    }
+    return LOOP_EXIT;
 }
 
 int main(int argc, char **argv)
