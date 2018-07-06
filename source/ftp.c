@@ -39,23 +39,10 @@
 
 #define POLL_UNKNOWN (~(POLLIN | POLLPRI | POLLOUT))
 
-#ifndef __SWITCH__
-#define XFER_BUFFERSIZE 32768
-#define SOCK_BUFFERSIZE 32768
-#define FILE_BUFFERSIZE 65536
-#define CMD_BUFFERSIZE 4096
-#else
-/* we have a lot of memory to waste on the Switch */
-// But not in the sysmodule :D
-/*#define XFER_BUFFERSIZE 65536
-#define SOCK_BUFFERSIZE 65536
-#define FILE_BUFFERSIZE 1048576
-#define CMD_BUFFERSIZE  4096*/
-#define XFER_BUFFERSIZE 16384
-#define SOCK_BUFFERSIZE 16384
-#define FILE_BUFFERSIZE 32768
-#define CMD_BUFFERSIZE 4096
-#endif
+#define XFER_BUFFERSIZE 2048
+#define SOCK_BUFFERSIZE 2048
+#define FILE_BUFFERSIZE 4096
+#define CMD_BUFFERSIZE 2048
 
 #define LISTEN_PORT 5000
 #ifdef _3DS
