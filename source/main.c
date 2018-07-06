@@ -80,11 +80,6 @@ int main(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
-    /*
-    while (appletMainLoop())
-    {
-        svcSleepThread(10000000000L);
-    }*/
 
     mkdir("/logs", 0700);
     FILE *f = fopen("/logs/ftpd.log", "a");
