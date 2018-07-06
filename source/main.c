@@ -15,7 +15,7 @@
 
 #define ERPT_SAVE_ID 0x80000000000000D1
 #define TITLE_ID 0x4200000000000000
-#define HEAP_SIZE 0x000150000 //0x000540000
+#define HEAP_SIZE 0x0001A0000 //0x000540000
 
 // we aren't an applet
 u32 __nx_applet_type = AppletType_None;
@@ -80,6 +80,11 @@ int main(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
+    /*
+    while (appletMainLoop())
+    {
+        svcSleepThread(10000000000L);
+    }*/
 
     mkdir("/logs", 0700);
     FILE *f = fopen("/logs/ftpd.log", "a");
