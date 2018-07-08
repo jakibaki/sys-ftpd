@@ -82,10 +82,7 @@ int main(int argc, char **argv)
     (void)argv;
 
     mkdir("/logs", 0700);
-    FILE *f = fopen("/logs/ftpd.log", "a");
-    stdout = f;
-    stderr = f;
-    printf("---------------------------------\n");
+    unlink("/logs/ftpd.log");
 
     loop_status_t status = LOOP_RESTART;
 
@@ -95,7 +92,7 @@ int main(int argc, char **argv)
         if (ftp_init() == 0)
         {
             /* ftp loop */
-            status = loop(ftp_loop);
+            loop(ftp_loop);
 
             /* done with ftp */
             ftp_exit();
@@ -103,10 +100,6 @@ int main(int argc, char **argv)
         else
             status = LOOP_EXIT;
     }
-
-    printf("Done!\n");
-
-    fclose(f);
 
     return 0;
 }

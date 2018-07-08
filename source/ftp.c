@@ -502,6 +502,11 @@ ftp_session_open_file_read(ftp_session_t *session)
   struct stat st;
 
   /* open file in read mode */
+  if(!strcmp("/logs/ftpd.log", session->buffer)) {
+    console_print(RED "Tried to open ftpd.log for reading. That's not allowed!\n");
+    return -1;
+  }
+
   session->fp = fopen(session->buffer, "rb");
   if (session->fp == NULL)
   {
@@ -579,6 +584,11 @@ ftp_session_open_file_write(ftp_session_t *session,
 {
   int rc;
   const char *mode = "wb";
+
+  if(!strcmp("/logs/ftpd.log", session->buffer)) {
+    console_print(RED "Tried to open ftpd.log for reading. That's not allowed!");
+    return -1;
+  }
 
   if (append)
     mode = "ab";
