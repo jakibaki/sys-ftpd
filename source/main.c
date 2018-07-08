@@ -13,8 +13,7 @@
 
 #include "util.h"
 
-#define ERPT_SAVE_ID 0x80000000000000D1
-#define TITLE_ID 0x4200000000000000
+#define TITLE_ID 0x420000000000000E
 #define HEAP_SIZE 0x0001A0000 //0x000540000
 
 // we aren't an applet
@@ -34,6 +33,23 @@ void __libnx_initheap(void)
     fake_heap_end = fake_heap + HEAP_SIZE;
 }
 
+void registerFspLr() {
+    if (kernelAbove400())
+        return;
+
+    Result rc = fsprInitialize();
+    if (R_FAILED(rc))
+        fatalLater(rc);
+
+    u64 pid;
+    svcGetProcessId(&pid, CUR_PROCESS_HANDLE);
+
+    rc = fsprRegisterProgram(pid, TITLE_ID, FsStorageId_NandSystem, NULL, 0, NULL, 0);
+    if (R_FAILED(rc))
+        fatalLater(rc);
+    fsprExit();
+}
+
 void __appInit(void)
 {
     Result rc;
@@ -44,6 +60,7 @@ void __appInit(void)
     rc = fsInitialize();
     if (R_FAILED(rc))
         fatalLater(rc);
+    registerFspLr();
     rc = fsdevMountSdmc();
     if (R_FAILED(rc))
         fatalLater(rc);
