@@ -38,24 +38,6 @@ void __libnx_initheap(void)
     fake_heap_end = fake_heap + HEAP_SIZE;
 }
 
-void registerFspLr()
-{
-    if (kernelAbove400())
-        return;
-
-    Result rc = fsprInitialize();
-    if (R_FAILED(rc))
-        fatalLater(rc);
-
-    u64 pid;
-    svcGetProcessId(&pid, CUR_PROCESS_HANDLE);
-
-    rc = fsprRegisterProgram(pid, TITLE_ID, FsStorageId_NandSystem, NULL, 0, NULL, 0);
-    if (R_FAILED(rc))
-        fatalLater(rc);
-    fsprExit();
-}
-
 void __appInit(void)
 {
     Result rc;
@@ -66,7 +48,6 @@ void __appInit(void)
     rc = fsInitialize();
     if (R_FAILED(rc))
         fatalLater(rc);
-    registerFspLr();
     rc = fsdevMountSdmc();
     if (R_FAILED(rc))
         fatalLater(rc);
@@ -93,7 +74,7 @@ static loop_status_t loop(loop_status_t (*callback)(void))
 
     while (appletMainLoop())
     {
-        //svcSleepThread(30000000L);
+        svcSleepThread(10000000L);
         status = callback();
         console_render();
         if (status != LOOP_CONTINUE)
