@@ -25,6 +25,8 @@
 #define WHITE
 #endif
 
+extern int should_log;
+
 void console_init(void);
 
 __attribute__((format(printf,1,2)))

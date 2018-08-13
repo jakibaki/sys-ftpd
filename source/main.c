@@ -98,8 +98,16 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    mkdir("/logs", 0700);
-    unlink("/logs/ftpd.log");
+    FILE* should_log_file = fopen("/logs/ftpd_log_enabled", "r");
+    if(should_log_file != NULL) {
+        should_log = true;
+        fclose(should_log_file);
+
+        mkdir("/logs", 0700);
+        unlink("/logs/ftpd.log");
+
+    }
+    
 
     loop_status_t status = LOOP_RESTART;
 
