@@ -6,6 +6,7 @@
 #include <mpg123.h>
 #include <time.h>
 #include "util.h"
+#include "console.h"
 
 #include <switch.h>
 
@@ -72,7 +73,7 @@ int initMp3(const char* file)
 	 * recommendation. The size should be a multiple of the PCM frame size.
 	 */
 	buffSize = mpg123_outblock(mh) * 16;
-
+	console_print(RED "BufSize: %d\n", buffSize);
     for(int curBuf = 0; curBuf < BUF_COUNT; curBuf++) {
         buffData[curBuf] = memalign(0x1000, buffSize);
     }

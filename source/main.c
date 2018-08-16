@@ -103,7 +103,7 @@ static loop_status_t loop(loop_status_t (*callback)(void))
 
 void inputPoller()
 {
-    while (1)
+    while (appletMainLoop())
     {
         svcSleepThread(1e+8L);
         hidScanInput();
