@@ -13,13 +13,15 @@
 
 #include "util.h"
 
+#include "mp3.h"
+
 #define TITLE_ID 0x420000000000000E
 #define HEAP_SIZE 0x000540000
 
 // we aren't an applet
 u32 __nx_applet_type = AppletType_None;
 
-// setup a fake heap (we don't need the heap anyway)
+// setup a fake heap
 char fake_heap[HEAP_SIZE];
 
 // we override libnx internals to do a minimal init
@@ -33,7 +35,8 @@ void __libnx_initheap(void)
     fake_heap_end = fake_heap + HEAP_SIZE;
 }
 
-void registerFspLr() {
+void registerFspLr()
+{
     if (kernelAbove400())
         return;
 
@@ -67,6 +70,9 @@ void __appInit(void)
     rc = timeInitialize();
     if (R_FAILED(rc))
         fatalLater(rc);
+    rc = hidInitialize();
+    if (R_FAILED(rc))
+        fatalLater(rc);
 }
 
 void __appExit(void)
@@ -89,8 +95,24 @@ static loop_status_t loop(loop_status_t (*callback)(void))
         console_render();
         if (status != LOOP_CONTINUE)
             return status;
+        if (isPaused())
+            return LOOP_RESTART;
     }
     return LOOP_EXIT;
+}
+
+void inputPoller()
+{
+    while (1)
+    {
+        svcSleepThread(1e+8L);
+        hidScanInput();
+        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+        u64 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
+
+        if ((kDown & KEY_PLUS || kDown & KEY_MINUS || kDown & KEY_X) && (kHeld & KEY_PLUS && kHeld & KEY_MINUS && kHeld & KEY_X))
+            setPaused(!isPaused());
+    }
 }
 
 int main(int argc, char **argv)
@@ -98,21 +120,36 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    FILE* should_log_file = fopen("/logs/ftpd_log_enabled", "r");
-    if(should_log_file != NULL) {
+    FILE *should_log_file = fopen("/logs/ftpd_log_enabled", "r");
+    if (should_log_file != NULL)
+    {
         should_log = true;
         fclose(should_log_file);
 
         mkdir("/logs", 0700);
         unlink("/logs/ftpd.log");
-
     }
-    
+
+    mp3MutInit();
+    pauseInit();
+    Thread pauseThread;
+    Result rc = threadCreate(&pauseThread, inputPoller, NULL, 0x4000, 49, 3);
+    if (R_FAILED(rc))
+        fatalLater(rc);
+    rc = threadStart(&pauseThread);
+    if (R_FAILED(rc))
+        fatalLater(rc);
+
 
     loop_status_t status = LOOP_RESTART;
 
     while (status == LOOP_RESTART)
     {
+        while (isPaused())
+        {
+            svcSleepThread(1000000000L);
+        }
+
         /* initialize ftp subsystem */
         if (ftp_init() == 0)
         {

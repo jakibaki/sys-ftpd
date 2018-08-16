@@ -5,6 +5,7 @@
  * from https://cr.yp.to/ftp/filesystem.html
  */
 #include "ftp.h"
+#include "mp3.h"
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <dirent.h>
@@ -1744,6 +1745,7 @@ ftp_session_poll(ftp_session_t *session)
 
   /* disconnected from peer; destroy it and return next session */
   debug_print("disconnected from peer\n");
+  playMp3("/ftpd/disconnect.mp3");
   return ftp_session_destroy(session);
 }
 
@@ -2144,6 +2146,7 @@ ftp_loop(void)
       {
         return LOOP_RESTART;
       }
+      playMp3("/ftpd/connect.mp3");
     }
     else
     {

@@ -13,6 +13,7 @@
         "__string": "c",
         "string": "c",
         "string_view": "c",
-        "ios": "c"
+        "ios": "c",
+        "ftp.h": "c"
     }
 }
