@@ -143,6 +143,8 @@ int main(int argc, char **argv)
 
     loop_status_t status = LOOP_RESTART;
 
+
+    ftp_pre_init();
     while (status == LOOP_RESTART)
     {
         while (isPaused())
@@ -154,7 +156,7 @@ int main(int argc, char **argv)
         if (ftp_init() == 0)
         {
             /* ftp loop */
-            loop(ftp_loop);
+            status = loop(ftp_loop);
 
             /* done with ftp */
             ftp_exit();
@@ -162,6 +164,7 @@ int main(int argc, char **argv)
         else
             status = LOOP_EXIT;
     }
+    ftp_post_exit();
 
     return 0;
 }

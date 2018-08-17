@@ -29,12 +29,18 @@ static Mutex mp3Mutex;
 
 void mp3MutInit() {
 	mutexInit(&mp3Mutex);
+	
+	buffSize = 80256;
+    for(int curBuf = 0; curBuf < BUF_COUNT; curBuf++) {
+        buffData[curBuf] = memalign(0x1000, buffSize);
+    }
+
+    audoutInitialize();
+    audoutStartAudioOut();
 }
 
 int initMp3(const char* file)
 {
-    audoutInitialize();
-    audoutStartAudioOut();
     
 	int err = 0;
 	int encoding = 0;
@@ -68,15 +74,6 @@ int initMp3(const char* file)
 	mpg123_format_none(mh);
 	mpg123_format(mh, rate, channels, encoding);
 
-	/*
-	 * Buffer could be almost any size here, mpg123_outblock() is just some
-	 * recommendation. The size should be a multiple of the PCM frame size.
-	 */
-	buffSize = mpg123_outblock(mh) * 16;
-	console_print(RED "BufSize: %d\n", buffSize);
-    for(int curBuf = 0; curBuf < BUF_COUNT; curBuf++) {
-        buffData[curBuf] = memalign(0x1000, buffSize);
-    }
 
 	return 0;
 }
@@ -120,16 +117,12 @@ uint64_t decodeMp3(void* buffer)
  */
 void exitMp3(void)
 {
-    for(int curBuf = 0; curBuf < BUF_COUNT; curBuf++) {
+    /*for(int curBuf = 0; curBuf < BUF_COUNT; curBuf++) {
         free(buffData[curBuf]);
-    }
+    }*/
 	mpg123_close(mh);
 	mpg123_delete(mh);
 	mpg123_exit();
-	audoutExit();
-	for(int i = 0; i < 200; i++)
-		svcSleepThread(500000L);
-	
 }
 
 int fillBuf() {

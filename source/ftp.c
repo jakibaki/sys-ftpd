@@ -1914,68 +1914,13 @@ applet_hook(AppletHookType type,
 }
 #endif
 
-/*! initialize ftp subsystem */
-int ftp_init(void)
-{
+void ftp_pre_init(void)
+{  
   int rc;
 
   start_time = time(NULL);
 
-#ifdef _3DS
-  Result ret = 0;
-  u32 wifi = 0;
-  bool loop;
 
-  /* register apt hook */
-  aptHook(&cookie, apt_hook, NULL);
-
-  console_print(GREEN "Waiting for wifi...\n" RESET);
-
-  /* wait for wifi to be available */
-  while ((loop = aptMainLoop()) && !wifi && (ret == 0 || ret == 0xE0A09D2E))
-  {
-    ret = 0;
-
-    hidScanInput();
-    if (hidKeysDown() & KEY_B)
-    {
-      /* user canceled */
-      loop = false;
-      break;
-    }
-
-    /* update the wifi status */
-    ret = ACU_GetWifiStatus(&wifi);
-    if (ret != 0)
-      wifi = 0;
-  }
-
-  /* check if there was a wifi error */
-  if (ret != 0)
-    console_print(RED "ACU_GetWifiStatus returns 0x%lx\n" RESET, ret);
-
-  /* check if we need to exit */
-  if (!loop || ret != 0)
-    return -1;
-
-  console_print(GREEN "Ready!\n" RESET);
-
-  /* allocate buffer for SOC service */
-  SOCU_buffer = (u32 *)memalign(SOCU_ALIGN, SOCU_BUFFERSIZE);
-  if (SOCU_buffer == NULL)
-  {
-    console_print(RED "memalign: failed to allocate\n" RESET);
-    goto memalign_fail;
-  }
-
-  /* initialize SOC service */
-  ret = socInit(SOCU_buffer, SOCU_BUFFERSIZE);
-  if (ret != 0)
-  {
-    console_print(RED "socInit: %08X\n" RESET, (unsigned int)ret);
-    goto soc_fail;
-  }
-#elif defined(__SWITCH__)
   static const SocketInitConfig socketInitConfig = {
       .bsdsockets_version = 1,
 
@@ -1998,7 +1943,12 @@ int ftp_init(void)
 
   /* register applet hook */
   appletHook(&cookie, applet_hook, NULL);
-#endif
+}
+
+/*! initialize ftp subsystem */
+int ftp_init(void)
+{
+  int rc = 0;
 
   /* allocate socket to listen for clients */
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -2011,13 +1961,9 @@ int ftp_init(void)
 
   /* get address to listen on */
   serv_addr.sin_family = AF_INET;
-#ifdef _3DS
-  serv_addr.sin_addr.s_addr = gethostid();
-  serv_addr.sin_port = htons(LISTEN_PORT);
-#else
+
   serv_addr.sin_addr.s_addr = INADDR_ANY;
   serv_addr.sin_port = htons(LISTEN_PORT);
-#endif
 
   /* reuse address */
   {
@@ -2058,23 +2004,11 @@ int ftp_init(void)
   }
 
   return 0;
-
-#ifdef _3DS
-soc_fail:
-  free(SOCU_buffer);
-  SOCU_buffer = NULL;
-
-memalign_fail:
-  return -1;
-#endif
 }
 
 /*! deinitialize ftp subsystem */
 void ftp_exit(void)
 {
-#if defined(_3DS)
-  Result ret;
-#endif
 
   debug_print("exiting ftp server\n");
 
@@ -2086,26 +2020,15 @@ void ftp_exit(void)
   if (listenfd >= 0)
     ftp_closesocket(listenfd, false);
 
-#ifdef _3DS
-  /* deinitialize SOC service */
-  console_render();
-  console_print(CYAN "Waiting for socExit()...\n" RESET);
-
-  if (SOCU_buffer != NULL)
-  {
-    ret = socExit();
-    if (ret != 0)
-      console_print(RED "socExit: 0x%08X\n" RESET, (unsigned int)ret);
-    free(SOCU_buffer);
-  }
-#elif defined(__SWITCH__)
   /* deinitialize socket driver */
   console_render();
   console_print(CYAN "Waiting for socketExit()...\n" RESET);
 
-  socketExit();
+}
 
-#endif
+void ftp_post_exit(void)
+{
+    socketExit();
 }
 
 /*! ftp look
