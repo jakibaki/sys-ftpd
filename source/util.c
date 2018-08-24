@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <math.h>
+#include <unistd.h>
 
 #include <switch.h>
+
+#include "mp3.h"
 
 void fatalLater(Result err)
 {
