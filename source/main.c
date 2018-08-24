@@ -9,6 +9,9 @@
 #include "console.h"
 #include "ftp.h"
 
+// only for mkdir, used when creating the "logs" directory
+#include <sys/stat.h>
+
 #include <switch.h>
 
 #include "util.h"
