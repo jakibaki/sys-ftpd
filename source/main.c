@@ -90,7 +90,7 @@ static loop_status_t loop(loop_status_t (*callback)(void))
 
     while (appletMainLoop())
     {
-        svcSleepThread(30000000L);
+        //svcSleepThread(30000000L);
         status = callback();
         console_render();
         if (status != LOOP_CONTINUE)
