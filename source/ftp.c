@@ -587,14 +587,20 @@ ftp_session_open_file_write(ftp_session_t *session,
   const char *mode = "wb";
 
   if(!strcmp("/logs/ftpd.log", session->buffer)) {
-    console_print(RED "Tried to open ftpd.log for reading. That's not allowed!");
+    console_print(RED "Tried to open ftpd.log for writing. That's not allowed!");
     return -1;
   }
 
   if (append)
     mode = "ab";
-  else if (session->filepos != 0)
+  else if (session->filepos != 0) {
     mode = "r+b";
+  }
+
+  if (!append) {
+    unlink(session->buffer);
+    // Opening an exisiting file for writing can apparently result in corruption D:
+  }
 
   /* open file in write mode */
   session->fp = fopen(session->buffer, mode);
