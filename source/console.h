@@ -1,3 +1,5 @@
+// This file is under the terms of the unlicense (https://github.com/DavidBuchanan314/ftpd/blob/master/LICENSE)
+
 #pragma once
 
 #ifdef _3DS

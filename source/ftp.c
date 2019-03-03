@@ -1,3 +1,5 @@
+// This file is under the terms of the unlicense (https://github.com/DavidBuchanan314/ftpd/blob/master/LICENSE)
+
 #define ENABLE_LOGGING 1
 /* This FTP server implementation is based on RFC 959,
  * (https://tools.ietf.org/html/rfc959), RFC 3659
