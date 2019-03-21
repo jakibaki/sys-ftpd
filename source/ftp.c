@@ -3380,11 +3380,19 @@ FTP_DECLARE(OPTS)
 FTP_DECLARE(PASS)
 {
   console_print(CYAN "%s %s\n" RESET, __func__, args ? args : "");
-
-  /* we accept any password */
+  const char* Password = "Guest";
   ftp_session_set_state(session, COMMAND_STATE, 0);
-
-  ftp_send_response(session, 230, "OK\r\n");
+  if (strcmp(args, Password) == 0)
+  {   
+        ftp_send_response(session, 230, "OK\r\n");
+		return;
+  }
+  else
+  {
+        ftp_send_response(session, 430, "Invalid username or password\r\n");
+  }
+   /* we accept any password
+  ftp_send_response(session, 230, "OK\r\n"); */
 }
 
 /*! @fn static void PASV(ftp_session_t *session, const char *args)
@@ -4059,9 +4067,19 @@ FTP_DECLARE(TYPE)
 FTP_DECLARE(USER)
 {
   console_print(CYAN "%s %s\n" RESET, __func__, args ? args : "");
-
+  const char* User = "Guest";
   ftp_session_set_state(session, COMMAND_STATE, 0);
+  if (strcmp(args, User) == 0)
+  {   
+        ftp_send_response(session, 230, "OK\r\n");
+		return;
+  }
+  else
+  {
+        ftp_send_response(session, 430, "Invalid username or password\r\n");
+  }
+  
 
-  /* we accept any user name */
-  ftp_send_response(session, 230, "OK\r\n");
+  /* we accept any user name 
+  ftp_send_response(session, 230, "OK\r\n");*/
 }
