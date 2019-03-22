@@ -9,7 +9,7 @@ user:=guest
 [Password]
 Password:=guest
 
-============================================================================================================
+====================================================================================================
 
 This is a nintendo-switch sysmodule which runs an ftpd-server in the background (on port 5000 with no auth).
 
