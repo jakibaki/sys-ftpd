@@ -1,4 +1,4 @@
-# sys-ftpd ++ fs_mitm
+# sys-ftpd ++ Boot2 SysModule
 this version updated to support INI configuration file from root of the SD Card "sys-ftpd-config.ini"
 
 INI Example:
