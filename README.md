@@ -4,9 +4,11 @@ this version updated to support INI configuration file from root of the SD Card 
 INI Example:
 
 [User]
+
 user:=guest
 
 [Password]
+
 Password:=guest
 
 ====================================================================================================
