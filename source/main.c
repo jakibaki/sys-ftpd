@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include "console.h"
 #include "ftp.h"
+#include <stdlib.h>
 
 // only for mkdir, used when creating the "logs" directory
 #include <sys/stat.h>

@@ -54,6 +54,19 @@
 #define DATA_PORT 0 /* ephemeral port */
 #endif
 
+#include <assert.h>
+#include "minIni.h"
+#define sizearray(a)  (sizeof(a) / sizeof((a)[0]))
+
+const char inifile[] = "/sys-ftpd-config.ini";
+
+int Callback(const char *section, const char *key, const char *value, void *userdata)
+{
+  (void)userdata; /* this parameter is not used in this example */
+  printf("    [%s]\t%s=%s\n", section, key, value);
+  return 1;
+}
+
 typedef struct ftp_session_t ftp_session_t;
 
 #define FTP_DECLARE(x) static void x(ftp_session_t *session, const char *args)
@@ -3380,9 +3393,12 @@ FTP_DECLARE(OPTS)
 FTP_DECLARE(PASS)
 {
   console_print(CYAN "%s %s\n" RESET, __func__, args ? args : "");
-  const char* Password = "Guest";
+  //const char* Password = "Guest";
+  char str[100];
+  long n;
+  n = ini_gets("Password", "Password:", "dummy", str, sizearray(str), inifile); 
   ftp_session_set_state(session, COMMAND_STATE, 0);
-  if (strcmp(args, Password) == 0)
+  if (strcmp(args, str) == 0)
   {   
         ftp_send_response(session, 230, "OK\r\n");
 		return;
@@ -4067,9 +4083,12 @@ FTP_DECLARE(TYPE)
 FTP_DECLARE(USER)
 {
   console_print(CYAN "%s %s\n" RESET, __func__, args ? args : "");
-  const char* User = "Guest";
+  //const char* User = "Guest";
+  char str[100];
+  long n;
+  n = ini_gets("User", "user:", "dummy", str, sizearray(str), inifile); 
   ftp_session_set_state(session, COMMAND_STATE, 0);
-  if (strcmp(args, User) == 0)
+  if (strcmp(args, str) == 0)
   {   
         ftp_send_response(session, 230, "OK\r\n");
 		return;
