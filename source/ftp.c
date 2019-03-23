@@ -3393,11 +3393,14 @@ FTP_DECLARE(OPTS)
 FTP_DECLARE(PASS)
 {
   console_print(CYAN "%s %s\n" RESET, __func__, args ? args : "");
-  char str[100];
-  long n;
-  n = ini_gets("Password", "Password:", "dummy", str, sizearray(str), inifile); 
+  char str_pass[100];
+  long _pass;
+  _pass = ini_gets("Password", "Password:", "dummy", str_pass, sizearray(str_pass), inifile); 
+  char str_anony[100];
+  long _anony;
+  _anony = ini_gets("Anonymous", "anonymous:", "dummy", str_anony, sizearray(str_anony), inifile); 
   ftp_session_set_state(session, COMMAND_STATE, 0);
-  if (strcmp(args, str) == 0)
+  if (strcmp(args, str_pass) == 0 || strcmp("1", str_anony) == 0)
   {   
         ftp_send_response(session, 230, "OK\r\n");
 		return;
@@ -4080,11 +4083,14 @@ FTP_DECLARE(TYPE)
 FTP_DECLARE(USER)
 {
   console_print(CYAN "%s %s\n" RESET, __func__, args ? args : "");
-  char str[100];
-  long n;
-  n = ini_gets("User", "user:", "dummy", str, sizearray(str), inifile); 
+  char str_user[100];
+  long _user;
+  _user = ini_gets("User", "user:", "dummy", str_user, sizearray(str_user), inifile); 
+  char str_anony[100];
+  long _anony;
+  _anony = ini_gets("Anonymous", "anonymous:", "dummy", str_anony, sizearray(str_anony), inifile); 
   ftp_session_set_state(session, COMMAND_STATE, 0);
-  if (strcmp(args, str) == 0)
+  if (strcmp(args, str_user) == 0 || strcmp("1", str_anony) == 0)
   {   
         ftp_send_response(session, 230, "OK\r\n");
 		return;

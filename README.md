@@ -1,15 +1,18 @@
 # sys-ftpd ++ Boot2 SysModule
-this version updated to support INI configuration file from root of the SD Card "sys-ftpd-config.ini"
+#this version updated to support INI configuration file from root of the SD Card "sys-ftpd-config.ini"
 
 INI Example:
 
 [User]
-
-user:=guest
+user:=krank
 
 [Password]
+Password:=yura2203
 
-Password:=guest
+[Anonymous]
+anonymous:=1
+#if anonymous:=1 no login and password needed !
+#if anonymous:=0 must set user:= and Password:= !
 
 ====================================================================================================
 
