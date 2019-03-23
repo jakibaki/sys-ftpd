@@ -181,6 +181,8 @@ struct ftp_session_t
   uint64_t filesize; /*! persistent file size between callbacks */
   FILE *fp;          /*! persistent open file pointer between callbacks */
   DIR *dp;           /*! persistent open directory pointer between callbacks */
+  bool user_ok;
+  bool pass_ok;
 };
 
 /*! ftp command descriptor */
@@ -1255,6 +1257,8 @@ ftp_session_new(int listen_fd)
   session->data_fd = -1;
   session->mlst_flags = SESSION_MLST_TYPE | SESSION_MLST_SIZE | SESSION_MLST_MODIFY | SESSION_MLST_PERM;
   session->state = COMMAND_STATE;
+  session->user_ok    = false;
+  session->pass_ok    = false;
 
   /* link to the sessions list */
   if (sessions == NULL)
@@ -1286,6 +1290,8 @@ ftp_session_new(int listen_fd)
   ftp_send_response(session, 220, "Hello!\r\n");
   return 0;
 }
+
+
 
 /*! accept PASV connection for ftp session
  *
@@ -1405,6 +1411,81 @@ ftp_session_connect(ftp_session_t *session)
   }
 
   return 0;
+}
+
+static bool
+ftp_auth_oncommand(ftp_session_t *session, const char *command) 
+{
+  if(command && (strcasecmp("USER", command) == 0 || strcasecmp("PASS", command) == 0 || strcasecmp("QUIT", command) == 0)) 
+  {
+    return true;
+  }
+  
+  return session->user_ok && session->pass_ok;
+}
+
+static void
+ftp_auth_check(ftp_session_t *session, const char *user, const char *pass) 
+{
+	char str_user[100];
+  long _user;
+  _user = ini_gets("User", "user:", "dummy", str_user, sizearray(str_user), inifile); 
+  char str_pass[100];
+  long _pass;
+  _pass = ini_gets("Password", "password:", "dummy", str_pass, sizearray(str_pass), inifile); 
+  char str_anony[100];
+  long _anony;
+  _anony = ini_gets("Anonymous", "anonymous:", "dummy", str_anony, sizearray(str_anony), inifile); 
+  
+  if (strcmp("1", str_anony) == 0)
+  {      
+        session->user_ok = false;
+        session->pass_ok = false;
+        ftp_send_response(session, 230, "OK, Huh Anonymous is that you ???\r\n");
+		return;
+  }
+  
+  if(user) 
+  {
+    if(strcmp(str_user, user) == 0) 
+	{
+      session->user_ok = true;
+    } 
+	else 
+	{
+      ftp_session_set_state(session, COMMAND_STATE, CLOSE_PASV | CLOSE_DATA);
+      ftp_send_response(session, 430, "Unknown user, Please check /ftpd/config.ini\r\n");
+      ftp_session_close_cmd(session);
+      return;
+    }
+  }
+  
+  if(pass) 
+  {
+    if(strcmp(str_pass, pass) == 0) 
+	{
+      session->pass_ok = true;
+    } 
+	else 
+	{
+      ftp_session_set_state(session, COMMAND_STATE, CLOSE_PASV | CLOSE_DATA);
+      ftp_send_response(session, 430, "Wrong password, Please check /ftpd/config.ini\r\n");
+      ftp_session_close_cmd(session);
+      return;
+    }
+  }
+  
+  ftp_session_set_state(session, COMMAND_STATE, 0);
+  if(ftp_auth_oncommand(session, NULL)) 
+  {
+    ftp_send_response(session, 230, "OK\r\n");
+	return;
+  } 
+  else 
+  {
+    ftp_send_response(session, 331, "next step required\r\n");
+	return;
+  }
 }
 
 /*! read command for ftp session
@@ -3393,22 +3474,7 @@ FTP_DECLARE(OPTS)
 FTP_DECLARE(PASS)
 {
   console_print(CYAN "%s %s\n" RESET, __func__, args ? args : "");
-  char str_pass[100];
-  long _pass;
-  _pass = ini_gets("Password", "Password:", "dummy", str_pass, sizearray(str_pass), inifile); 
-  char str_anony[100];
-  long _anony;
-  _anony = ini_gets("Anonymous", "anonymous:", "dummy", str_anony, sizearray(str_anony), inifile); 
-  ftp_session_set_state(session, COMMAND_STATE, 0);
-  if (strcmp(args, str_pass) == 0 || strcmp("1", str_anony) == 0)
-  {   
-        ftp_send_response(session, 230, "OK\r\n");
-		return;
-  }
-  else
-  {
-        ftp_send_response(session, 430, "Invalid username or password\r\n");
-  }
+  ftp_auth_check(session, NULL, args);
 }
 
 /*! @fn static void PASV(ftp_session_t *session, const char *args)
@@ -4083,20 +4149,5 @@ FTP_DECLARE(TYPE)
 FTP_DECLARE(USER)
 {
   console_print(CYAN "%s %s\n" RESET, __func__, args ? args : "");
-  char str_user[100];
-  long _user;
-  _user = ini_gets("User", "user:", "dummy", str_user, sizearray(str_user), inifile); 
-  char str_anony[100];
-  long _anony;
-  _anony = ini_gets("Anonymous", "anonymous:", "dummy", str_anony, sizearray(str_anony), inifile); 
-  ftp_session_set_state(session, COMMAND_STATE, 0);
-  if (strcmp(args, str_user) == 0 || strcmp("1", str_anony) == 0)
-  {   
-        ftp_send_response(session, 230, "OK\r\n");
-		return;
-  }
-  else
-  {
-        ftp_send_response(session, 430, "Invalid username or password\r\n");
-  }
+  ftp_auth_check(session, args, NULL);
 }
