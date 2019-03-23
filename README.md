@@ -1,24 +1,6 @@
 # sys-ftpd
-#this version updated to support INI configuration file from root of the SD Card "sys-ftpd-config.ini"
 
-INI Example:
-
-[User]
-
-user:=krank
-
-[Password]
-
-Password:=yura2203
-
-[Anonymous]
-
-anonymous:=1
-
-#if anonymous:=1 no login and password needed !
-#if anonymous:=0 must set user:= and Password:= !
-
-====================================================================================================
+Put the contents of the sd_card folder in the root of your sd-card or else the Module won't work!
 
 This is a nintendo-switch sysmodule which runs an ftpd-server in the background (on port 5000 with no auth).
 
@@ -33,3 +15,20 @@ https://freesound.org/people/jens.enk/sounds/434610/
 https://freesound.org/people/jens.enk/sounds/434611/  
 https://freesound.org/people/rhodesmas/sounds/322897/
 https://freesound.org/people/rhodesmas/sounds/322895/
+
+
+---
+
+Config Example (`/ftpd/config.ini`):
+
+"""
+[User]
+user:=ftpd
+[Password]
+password:=12345
+
+[Anonymous]
+anonymous:=1
+;if anonymous:=1 no login and password are needed!
+;if anonymous:=0 must set user:= and Password!
+"""

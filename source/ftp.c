@@ -58,7 +58,7 @@
 #include "minIni.h"
 #define sizearray(a)  (sizeof(a) / sizeof((a)[0]))
 
-const char inifile[] = "/sys-ftpd-config.ini";
+const char inifile[] = "/ftpd/config.ini";
 
 int Callback(const char *section, const char *key, const char *value, void *userdata)
 {
