@@ -4,13 +4,17 @@
 INI Example:
 
 [User]
+
 user:=krank
 
 [Password]
+
 Password:=yura2203
 
 [Anonymous]
+
 anonymous:=1
+
 #if anonymous:=1 no login and password needed !
 #if anonymous:=0 must set user:= and Password:= !
 
