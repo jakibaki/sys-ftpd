@@ -1,17 +1,4 @@
-# sys-ftpd ++ Boot2 SysModule
-this version updated to support INI configuration file from root of the SD Card "sys-ftpd-config.ini"
-
-INI Example:
-
-[User]
-
-user:=guest
-
-[Password]
-
-Password:=guest
-
-====================================================================================================
+# sys-ftpd
 
 This is a nintendo-switch sysmodule which runs an ftpd-server in the background (on port 5000 with no auth).
 
