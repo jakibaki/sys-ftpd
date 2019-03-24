@@ -24,8 +24,13 @@ Config Example (`/ftpd/config.ini`):
 ```
 [User]
 user:=ftpd
+
 [Password]
 password:=12345
+
+[Port]
+port:=5000
+
 [Anonymous]
 anonymous:=1
 ;if anonymous:=1 no login and password are needed!

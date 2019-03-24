@@ -47,7 +47,8 @@
 #define FILE_BUFFERSIZE 32768
 #define CMD_BUFFERSIZE 4096
 
-#define LISTEN_PORT 5000
+int LISTEN_PORT;
+//#define LISTEN_PORT 5000
 #ifdef _3DS
 #define DATA_PORT (LISTEN_PORT + 1)
 #else
@@ -2065,6 +2066,10 @@ int ftp_init(void)
   serv_addr.sin_family = AF_INET;
 
   serv_addr.sin_addr.s_addr = INADDR_ANY;
+  char str_port[100];
+  long _port;
+  _port = ini_gets("Port", "port:", "dummy", str_port, sizearray(str_port), inifile); 
+  LISTEN_PORT = atoi (str_port);
   serv_addr.sin_port = htons(LISTEN_PORT);
 
   /* reuse address */
