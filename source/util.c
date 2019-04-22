@@ -69,10 +69,10 @@ void setPaused(bool newPaused) {
     if(paused) {
         FILE *should_pause_file = fopen("/ftpd_paused", "w");
         fclose(should_pause_file);
-        playMp3("/ftpd/pauseon.mp3");
+        playMp3("/config/sys-ftpd/pauseon.mp3");
     } else {
         unlink("/ftpd_paused");
-        playMp3("/ftpd/pauseoff.mp3");
+        playMp3("/config/sys-ftpd/pauseoff.mp3");
     }
     mutexUnlock(&pausedMutex);
 }
