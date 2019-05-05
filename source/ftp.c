@@ -59,7 +59,7 @@ int LISTEN_PORT;
 #include "minIni.h"
 #define sizearray(a)  (sizeof(a) / sizeof((a)[0]))
 
-const char inifile[] = "/config/ftpd/config.ini";
+const char inifile[] = "/config/sys-ftpd/config.ini";
 
 int Callback(const char *section, const char *key, const char *value, void *userdata)
 {
@@ -521,7 +521,7 @@ ftp_session_open_file_read(ftp_session_t *session)
   struct stat st;
 
   /* open file in read mode */
-  if(!strcmp("/config/ftpd/logs/ftpd.log", session->buffer)) {
+  if(!strcmp("/config/sys-ftpd/logs/ftpd.log", session->buffer)) {
     console_print(RED "Tried to open ftpd.log for reading. That's not allowed!\n");
     return -1;
   }
@@ -604,7 +604,7 @@ ftp_session_open_file_write(ftp_session_t *session,
   int rc;
   const char *mode = "wb";
 
-  if(!strcmp("/config/ftpd/logs/ftpd.log", session->buffer)) {
+  if(!strcmp("/config/sys-ftpd/logs/ftpd.log", session->buffer)) {
     console_print(RED "Tried to open ftpd.log for writing. That's not allowed!");
     return -1;
   }
@@ -1455,7 +1455,7 @@ ftp_auth_check(ftp_session_t *session, const char *user, const char *pass)
 	else 
 	{
       ftp_session_set_state(session, COMMAND_STATE, CLOSE_PASV | CLOSE_DATA);
-      ftp_send_response(session, 430, "Unknown user, Please check /config/ftpd/config.ini\r\n");
+      ftp_send_response(session, 430, "Unknown user, Please check /config/sys-ftpd/config.ini\r\n");
       ftp_session_close_cmd(session);
       return;
     }
@@ -1470,7 +1470,7 @@ ftp_auth_check(ftp_session_t *session, const char *user, const char *pass)
 	else 
 	{
       ftp_session_set_state(session, COMMAND_STATE, CLOSE_PASV | CLOSE_DATA);
-      ftp_send_response(session, 430, "Wrong password, Please check /config/ftpd/config.ini\r\n");
+      ftp_send_response(session, 430, "Wrong password, Please check /config/sys-ftpd/config.ini\r\n");
       ftp_session_close_cmd(session);
       return;
     }
@@ -1848,7 +1848,7 @@ ftp_session_poll(ftp_session_t *session)
 
   /* disconnected from peer; destroy it and return next session */
   debug_print("disconnected from peer\n");
-  playMp3("/config/ftpd/disconnect.mp3");
+  playMp3("/config/sys-ftpd/disconnect.mp3");
   return ftp_session_destroy(session);
 }
 
@@ -2176,7 +2176,7 @@ ftp_loop(void)
       {
         return LOOP_RESTART;
       }
-      playMp3("/config/ftpd/connect.mp3");
+      playMp3("/config/sys-ftpd/connect.mp3");
     }
     else
     {
