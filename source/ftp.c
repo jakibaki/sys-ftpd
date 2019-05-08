@@ -604,7 +604,7 @@ ftp_session_open_file_write(ftp_session_t *session,
   int rc;
   const char *mode = "wb";
 
-  if(!strcmp("/logs/ftpd.log", session->buffer)) {
+  if(!strcmp("/config/sys-ftpd/logs/ftpd.log", session->buffer)) {
     console_print(RED "Tried to open ftpd.log for writing. That's not allowed!");
     return -1;
   }

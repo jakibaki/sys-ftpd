@@ -111,8 +111,8 @@ int main(int argc, char **argv)
         should_log = true;
         fclose(should_log_file);
 
-        mkdir("/logs", 0700);
-        unlink("/logs/ftpd.log");
+        mkdir("/config/sys-ftpd/logs", 0700);
+        unlink("/config/sys-ftpd/logs/ftpd.log");
     }
 
     mp3MutInit();
