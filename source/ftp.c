@@ -59,6 +59,11 @@ int LISTEN_PORT;
 #include "minIni.h"
 #define sizearray(a)  (sizeof(a) / sizeof((a)[0]))
 
+HidsysNotificationLedPattern pattern;
+size_t i;
+size_t total_entries;
+u64 UniquePadIds[2];
+
 const char inifile[] = "/ftpd/config.ini";
 
 int Callback(const char *section, const char *key, const char *value, void *userdata)
@@ -1849,6 +1854,8 @@ ftp_session_poll(ftp_session_t *session)
   /* disconnected from peer; destroy it and return next session */
   debug_print("disconnected from peer\n");
   playMp3("/ftpd/disconnect.mp3");
+  // Disable notification led.
+  memset(&pattern, 0, sizeof(pattern));
   return ftp_session_destroy(session);
 }
 
@@ -2177,6 +2184,22 @@ ftp_loop(void)
         return LOOP_RESTART;
       }
       playMp3("/ftpd/connect.mp3");
+      memset(&pattern, 0, sizeof(pattern));
+
+      // Setup Breathing effect pattern data.
+      pattern.baseMiniCycleDuration = 0x8;             // 100ms.
+      pattern.totalMiniCycles = 0x2;                   // 3 mini cycles. Last one 12.5ms.
+      pattern.totalFullCycles = 0x0;                   // Repeat forever.
+      pattern.startIntensity = 0x2;                    // 13%.
+
+      pattern.miniCycles[0].ledIntensity = 0xF;        // 100%.
+      pattern.miniCycles[0].transitionSteps = 0xF;     // 15 steps. Transition time 1.5s.
+      pattern.miniCycles[0].finalStepDuration = 0x0;   // Forced 12.5ms.
+      pattern.miniCycles[1].ledIntensity = 0x2;        // 13%.
+      pattern.miniCycles[1].transitionSteps = 0xF;     // 15 steps. Transition time 1.5s.
+      pattern.miniCycles[1].finalStepDuration = 0x0;   // Forced 12.5ms. 
+      total_entries = 0;
+      memset(UniquePadIds, 0, sizeof(UniquePadIds));
     }
     else
     {
