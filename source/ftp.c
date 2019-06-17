@@ -2199,7 +2199,22 @@ ftp_loop(void)
       pattern.miniCycles[1].transitionSteps = 0xF;     // 15 steps. Transition time 1.5s.
       pattern.miniCycles[1].finalStepDuration = 0x0;   // Forced 12.5ms. 
       total_entries = 0;
-      memset(UniquePadIds, 0, sizeof(UniquePadIds));
+
+
+            // Get the UniquePadIds for the specified controller, which will then be used with hidsysSetNotificationLedPattern.
+            // If you want to get the UniquePadIds for all controllers, you can use hidsysGetUniquePadIds instead.
+            rc = hidsysGetUniquePadsFromNpad(hidGetHandheldMode() ? CONTROLLER_HANDHELD : CONTROLLER_PLAYER_1, UniquePadIds, 2, &total_entries);
+            printf("hidsysGetUniquePadsFromNpad(): 0x%x", rc);
+            if (R_SUCCEEDED(rc)) printf(", %ld", total_entries);
+            printf("\n");
+
+            if (R_SUCCEEDED(rc)) {
+                for(i=0; i<total_entries; i++) { // System will skip sending the subcommand to controllers where this isn't available.
+                    printf("[%ld] = 0x%lx ", i, UniquePadIds[i]);
+                    rc = hidsysSetNotificationLedPattern(&pattern, UniquePadIds[i]);
+                    printf("hidsysSetNotificationLedPattern(): 0x%x\n", rc);
+                }
+            }
     }
     else
     {
