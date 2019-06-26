@@ -26,7 +26,7 @@ void flash_led_connect()
     size_t total_entries = 0;
 
     Result rc = hidsysGetUniquePadsFromNpad(hidGetHandheldMode() ? CONTROLLER_HANDHELD : CONTROLLER_PLAYER_1, uniquePadIds, 2, &total_entries);
-    if (R_FAILED(rc))
+    if (R_FAILED(rc) && rc != MAKERESULT(Module_Libnx, LibnxError_IncompatSysVer))
         fatalLater(rc);
 
     for (int i = 0; i < total_entries; i++)
