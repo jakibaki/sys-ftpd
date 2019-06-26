@@ -38,6 +38,7 @@
 #define BIT(x) (1 << (x))
 #endif
 #include "console.h"
+#include "led.h"
 #include "util.h"
 
 #define POLL_UNKNOWN (~(POLLIN | POLLPRI | POLLOUT))
@@ -2176,6 +2177,7 @@ ftp_loop(void)
       {
         return LOOP_RESTART;
       }
+      flash_led_connect();
       playMp3("/ftpd/connect.mp3");
     }
     else

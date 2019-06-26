@@ -14,6 +14,7 @@
         "string": "c",
         "string_view": "c",
         "ios": "c",
-        "ftp.h": "c"
+        "ftp.h": "c",
+        "util.h": "c"
     }
 }
