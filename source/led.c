@@ -1,7 +1,6 @@
 #include <string.h>
 #include <switch.h>
 
-#include "console.h"
 #include "util.h"
 
 void flash_led_connect()
