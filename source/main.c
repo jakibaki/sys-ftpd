@@ -105,14 +105,14 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    FILE *should_log_file = fopen("/logs/ftpd_log_enabled", "r");
+    FILE *should_log_file = fopen("/config/logs/ftpd_log_enabled", "r");
     if (should_log_file != NULL)
     {
         should_log = true;
         fclose(should_log_file);
 
-        mkdir("/logs", 0700);
-        unlink("/logs/ftpd.log");
+        mkdir("/config/logs", 0700);
+        unlink("/config/logs/ftpd.log");
     }
 
     mp3MutInit();
