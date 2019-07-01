@@ -58,6 +58,18 @@ void __appInit(void)
     rc = hidInitialize();
     if (R_FAILED(rc))
         fatalLater(rc);
+    rc = hidsysInitialize();
+    if (R_FAILED(rc))
+        fatalLater(rc);
+    rc = setsysInitialize();
+    if (R_SUCCEEDED(rc))
+    {
+        SetSysFirmwareVersion fw;
+        rc = setsysGetFirmwareVersion(&fw);
+        if (R_SUCCEEDED(rc))
+            hosversionSet(MAKEHOSVERSION(fw.major, fw.minor, fw.micro));
+        setsysExit();
+    }
 }
 
 void __appExit(void)
@@ -67,6 +79,8 @@ void __appExit(void)
     smExit();
     audoutExit();
     timeExit();
+    hidExit();
+    hidsysExit();
 }
 
 static loop_status_t loop(loop_status_t (*callback)(void))
@@ -105,14 +119,14 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    FILE *should_log_file = fopen("/config/logs/ftpd_log_enabled", "r");
+    FILE *should_log_file = fopen("/config/sys-ftpd/logs/ftpd_log_enabled", "r");
     if (should_log_file != NULL)
     {
         should_log = true;
         fclose(should_log_file);
 
-        mkdir("/config/logs", 0700);
-        unlink("/config/logs/ftpd.log");
+        mkdir("/config/sys-ftpd/logs", 0700);
+        unlink("/config/sys-ftpd/logs/ftpd.log");
     }
 
     mp3MutInit();
@@ -125,9 +139,7 @@ int main(int argc, char **argv)
     if (R_FAILED(rc))
         fatalLater(rc);
 
-
     loop_status_t status = LOOP_RESTART;
-
 
     ftp_pre_init();
     while (status == LOOP_RESTART)
