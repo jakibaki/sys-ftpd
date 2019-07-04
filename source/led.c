@@ -21,12 +21,11 @@ void flash_led_connect()
     pattern.miniCycles[1].transitionSteps = 0xF;     // 15 steps. Transition time 1.5s.
     pattern.miniCycles[1].finalStepDuration = 0x0;   // Forced 12.5ms. 
 
-    u64 uniquePadIds[2];
-    memset(uniquePadIds, 0, sizeof(uniquePadIds));
+    u64 uniquePadIds[5] = {0};
 
     size_t total_entries = 0;
 
-    Result rc = hidsysGetUniquePadIds(hidGetHandheldMode() ? CONTROLLER_HANDHELD : CONTROLLER_PLAYER_1, uniquePadIds, 2, &total_entries);
+    Result rc = hidsysGetUniquePadIds(uniquePadIds, 5, &total_entries);
     if (R_FAILED(rc) && rc != MAKERESULT(Module_Libnx, LibnxError_IncompatSysVer))
         fatalLater(rc);
 
