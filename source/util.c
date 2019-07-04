@@ -47,7 +47,7 @@ static Mutex pausedMutex;
 void pauseInit() {
     mutexInit(&pausedMutex);
     mutexLock(&pausedMutex);
-    FILE *should_pause_file = fopen("/ftpd_paused", "r");
+    FILE *should_pause_file = fopen("/config/sys-ftpd/ftpd_paused", "r");
     if (should_pause_file != NULL) {
         paused = true;
         fclose(should_pause_file);
@@ -67,12 +67,12 @@ void setPaused(bool newPaused) {
     mutexLock(&pausedMutex);
     paused = newPaused;
     if(paused) {
-        FILE *should_pause_file = fopen("/ftpd_paused", "w");
+        FILE *should_pause_file = fopen("/config/sys-ftpd/ftpd_paused", "w");
         fclose(should_pause_file);
-        playMp3("/ftpd/pauseon.mp3");
+        playMp3("/config/sys-ftpd/pauseon.mp3");
     } else {
-        unlink("/ftpd_paused");
-        playMp3("/ftpd/pauseoff.mp3");
+        unlink("/config/sys-ftpd/ftpd_paused");
+        playMp3("/config/sys-ftpd/pauseoff.mp3");
     }
     mutexUnlock(&pausedMutex);
 }
