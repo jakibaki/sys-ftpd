@@ -42,6 +42,10 @@ LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*
 
 LIBS	:= -lnx -lmpg123 -lm 
 
+CXX		:= `which ccache` $(CXX)
+CC		:= `which ccache` $(CC)
+
+
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
